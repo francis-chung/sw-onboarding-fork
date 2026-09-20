@@ -9,8 +9,12 @@ class CORSConfig(BaseSettings):
     Check ``template.env`` for expected .env keys.
     """
 
+    allow_origins: list[str] = []
+    allow_credentials: bool = True
+    allow_method: list[str] = ["*"]
+    allow_headers: list[str] = ["*"]
+
     model_config = SettingsConfigDict(env_prefix="CORS_")
-    # TODO: (STEP 5) Implement this stub!
 
 
 def add_cors_middleware(app: FastAPI) -> None:
@@ -19,9 +23,11 @@ def add_cors_middleware(app: FastAPI) -> None:
 
     :param app: FastAPI app to add the middleware to
     """
-    # TODO: (STEP 5) Update this function to properly attach the CORS middleware.
     cors_settings = CORSConfig()
-    print(f"CORSConfig not implemented. ({cors_settings})")
     app.add_middleware(
         CORSMiddleware,
+        allow_origins=cors_settings.allow_origins,
+        allow_credentials=cors_settings.allow_credentials,
+        allow_methods=cors_settings.allow_method,
+        allow_headers=cors_settings.allow_headers,
     )
