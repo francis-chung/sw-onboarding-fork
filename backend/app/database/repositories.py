@@ -1,3 +1,4 @@
+from typing import Any
 from uuid import UUID
 
 from sqlmodel import select
@@ -21,6 +22,22 @@ class CommandsRepository(AbstractRepository[Command, UUID]):
     """
 
     model = Command
+
+    async def update(self, obj_id: UUID, data: dict[str, Any]) -> Command:
+        """
+        Overrides updates for commands to ensure the type_ argument is valid.
+
+        :param obj_id: UUID of the command to update.
+        :param data: Data to update the corresponding command to.
+        :return: The updated command.
+        """
+        if "type_" in data:
+            main_cmd_repo = MainCommandRepository()
+            try:
+                await main_cmd_repo.get_by_id(data["type_"])
+            except ValueError as e:
+                raise RuntimeError(f"Main commaand with ID {data['type_']} not found") from e
+        return await super().update(obj_id, data)
 
 
 class CommandHistoryRepository(AbstractRepository[CommandHistory, UUID]):
