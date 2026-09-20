@@ -80,6 +80,7 @@ async def update_command(
     :raises HTTPException: 422 if the repository rejects the update, e.g. a value of the wrong type or a
         ``type_`` that is not an existing main command. A rejected update leaves the command unchanged.
     """
+    # recreates dict to avoid None types
     updated_data = {}
     if request.status is not None:
         updated_data["status"] = request.status
