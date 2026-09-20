@@ -5,8 +5,12 @@ import type { CommandHistory } from "../utils/types";
 export function useCommandHistory(
   commandId: string,
 ): UseQueryResult<CommandHistory[]> {
-  // TODO: (STEP 7) Implement this hook.
-  // This hook should use React Query and return CommandHistory[].
-  // Define the refetch interval as a local constant.
-  throw new Error("not implemented");
+  const REFETCH_INTERVAL = 5000;
+
+  return useQuery({
+    queryKey: ['commandHistory', commandId],
+    queryFn: async () => fetch(`/api/commands/${commandId}/history`).then(res => res.json()).then(d => d.data),
+    refetchInterval: REFETCH_INTERVAL,
+    enabled: !!commandId,
+  })
 }
