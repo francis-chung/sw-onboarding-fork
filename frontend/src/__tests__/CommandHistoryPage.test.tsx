@@ -1,10 +1,12 @@
 import { render } from "@testing-library/react";
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import CommandHistoryPage from "../pages/CommandHistoryPage";
+import { useCommands } from "../hooks/useCommands";
 import { useCommandHistory } from "../hooks/useCommandHistory";
 import type { UseQueryResult } from "@tanstack/react-query";
-import type { CommandHistory } from "../utils/types";
+import type { Command, CommandHistory } from "../utils/types";
 
+vi.mock("../hooks/useCommands");
 vi.mock("../hooks/useCommandHistory");
 vi.mock("../components/Table", () => ({
   default: vi.fn(() => <div data-testid="mock-table" />),
@@ -29,6 +31,16 @@ describe("CommandHistoryPage", () => {
       isLoading: false,
       isError: false,
     } as unknown as UseQueryResult<CommandHistory[]>);
+
+    // mock data matching that of mockHistoryData
+    // arbitrary valid type_ argument
+    vi.mocked(useCommands).mockReturnValue({
+      data: [
+        { id: "11111111-1111-1111-1111-111111111111", status: "pending", type_: 1, params: null, created_at: "2026-01-01T00:00:00Z" },
+      ],
+      isLoading: false,
+      isError: false,
+    } as unknown as UseQueryResult<Command[]>);
   });
 
   it("renders without crashing", () => {
