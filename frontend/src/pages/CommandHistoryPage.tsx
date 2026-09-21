@@ -1,8 +1,9 @@
 import { createColumnHelper, flexRender } from "@tanstack/react-table";
 import Table from "../components/Table";
 import type { CommandHistory } from "../utils/types";
+import { useCommands } from "../hooks/useCommands";
 import { useCommandHistory } from "../hooks/useCommandHistory";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 
 const columnHelper = createColumnHelper<CommandHistory>();
@@ -22,26 +23,55 @@ const columns = [
   }),
 ];
 
-export function useCommands() {
-  return useQuery({
-    queryKey: ['commands'],
-    queryFn: () => fetch('/api/commands').then(res => res.json()).then(d => d.data),
-  });
-}
+
 
 /**
  * @brief CommandHistory component displaying the audit log table
  * @return tsx element of CommandHistory component
  */
 function CommandHistoryPage() {
-  // TODO: (STEP 8) Fetch the command history with useCommandHistory and pass the resulting
-  // CommandHistory[] directly to the Table component.
-  //
-  // The page must provide a way for the user to select which command's audit log they want to view.
-  // The selected command should determine which command history is fetched.
-  // The table should communicate that this is an audit log.
-  // The table should be centred on the page.
+  const { data: commands } = useCommands();
+  const [selectedId, setSelectedId] = useState<string>("");
+  const { data: history } = useCommandHistory(selectedId);
 
+  // selects the id of the first valid command on load
+  // required to render the table immediately for the tests
+  useEffect(() => {
+    if (commands?.length && !selectedId) {
+      setSelectedId(commands[0].id);
+    }
+  }, [commands, selectedId]);
+
+  return (
+    <div style={{
+      display: 'flex',
+      flexDirection: 'column',
+      alignItems: 'center',
+      padding: 8,
+    }}>
+      <select
+        value={selectedId}
+        onChange={e => setSelectedId(e.target.value)}
+        style={{
+          marginBottom: "1rem",
+          width: "full",
+          maxWidth: "28rem",
+        }}
+      >
+        <option value="">Select a command</option>
+        {commands?.map((cmd: any) => (
+          <option key={cmd.id} value={cmd.id}>{cmd.id.slice(0,8)}... ({cmd.status})</option>
+        ))}
+      </select>
+      {selectedId && (
+        <Table
+          data={history ?? []}
+          columns={columns}
+          containerClassName="w-full max-w-5xl"
+        />
+      )}
+    </div>
+  )
 }
 
 export default CommandHistoryPage;
