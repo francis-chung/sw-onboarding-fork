@@ -1,6 +1,7 @@
 from typing import Any
 from uuid import UUID
 
+from sqlalchemy import desc
 from sqlmodel import select
 
 from app.database.abstract_repository import AbstractRepository
@@ -53,6 +54,6 @@ class CommandHistoryRepository(AbstractRepository[CommandHistory, UUID]):
         """
         async with get_db_session() as session:
             result = await session.exec(
-                select(self.model).where(self.model.command_id == command_id).order_by(self.model.created_at.desc())
+                select(self.model).where(self.model.command_id == command_id).order_by(desc("created_at"))
             )
             return list(result.all())

@@ -1,4 +1,4 @@
-from typing import Annotated
+from typing import Annotated, Any
 from uuid import UUID
 
 from fastapi import APIRouter, Depends
@@ -91,7 +91,7 @@ async def update_command(
         ``type_`` that is not an existing main command. A rejected update leaves the command unchanged.
     """
     # recreates dict to avoid None types
-    updated_data = {}
+    updated_data: dict[str, Any] = {}
     if request.status is not None:
         updated_data["status"] = request.status
     if request.type_ is not None:
