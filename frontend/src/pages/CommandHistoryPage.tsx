@@ -34,10 +34,10 @@ const columns = [
  * @return tsx element of CommandHistory component
  */
 function CommandHistoryPage() {
-  const { data: commands, isPending: commandsPending, isError: isCommandsError, error: commandsError } = useCommands();
+  const { isPending: commandsPending, error: commandsError } = useCommands();
   const [searchId, setSearchId] = useState<string>("");
   const [selectedId, setSelectedId] = useState<string>("");
-  const { data: history, isPending: historyPending, isError: isHistoryError, error: historyError } = useCommandHistory(selectedId);
+  const { data: history, isError: isHistoryError, error: historyError } = useCommandHistory(selectedId);
 
   const sortedHistory = useMemo(() => {
     if (!history) return [];
