@@ -71,7 +71,7 @@ function CommandHistoryPage() {
           />
           <button
             className='search-button'
-            onClick={_ => setSelectedId(searchId)}
+            onClick={() => setSelectedId(searchId)}
           >
             Search
           </button>
