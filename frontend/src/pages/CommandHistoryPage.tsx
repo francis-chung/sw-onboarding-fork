@@ -1,14 +1,19 @@
 import { createColumnHelper, flexRender } from "@tanstack/react-table";
 import Table from "../components/Table";
-import type { CommandHistory } from "../utils/types";
+import type { Command } from "../utils/types";
 import { useCommands } from "../hooks/useCommands";
 import { useCommandHistory } from "../hooks/useCommandHistory";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
+import "./command-history-page.css";
 
-const columnHelper = createColumnHelper<CommandHistory>();
+const columnHelper = createColumnHelper<Command>();
 
 const columns = [
+  columnHelper.accessor('id', {
+    header: 'Command ID',
+    cell: info => (info.getValue() as string).slice(0,8) + '...',
+  }),
   columnHelper.accessor('status', {
     header: 'Status',
     cell: info => info.getValue(),
@@ -30,46 +35,51 @@ const columns = [
  * @return tsx element of CommandHistory component
  */
 function CommandHistoryPage() {
-  const { data: commands } = useCommands();
+  const { data: commands, isPending, isError, error } = useCommands();
   const [selectedId, setSelectedId] = useState<string>("");
-  const { data: history } = useCommandHistory(selectedId);
+  const [searchId, setSearchId] = useState<string>("");
 
-  // selects the id of the first valid command on load
-  // required to render the table immediately for the tests
-  useEffect(() => {
-    if (commands?.length && !selectedId) {
-      setSelectedId(commands[0].id);
-    }
+  // filters by command id and memoizes result
+  const filteredCommands = useMemo(() => {
+    if (!commands) return [];
+    if (!selectedId.trim()) return commands;
+    const lower = selectedId.toLowerCase();
+    return commands.filter(cmd => cmd.id.toLowerCase().includes(lower))
   }, [commands, selectedId]);
 
+  const sortedCommands = useMemo(() =>
+    [...filteredCommands].sort((a, b) =>
+      new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
+  ), [filteredCommands]);
+
+  if (isPending) {
+    return <div className='loading'>Loading commands...</div>;
+  }
+  if (isError) {
+    return <div className='error'>Failed to load: {error.message}</div>;
+  }
+
   return (
-    <div style={{
-      display: 'flex',
-      flexDirection: 'column',
-      alignItems: 'center',
-      padding: 8,
-    }}>
-      <select
-        value={selectedId}
-        onChange={e => setSelectedId(e.target.value)}
-        style={{
-          marginBottom: "1rem",
-          width: "full",
-          maxWidth: "28rem",
-        }}
-      >
-        <option value="">Select a command</option>
-        {commands?.map((cmd: any) => (
-          <option key={cmd.id} value={cmd.id}>{cmd.id.slice(0,8)}... ({cmd.status})</option>
-        ))}
-      </select>
-      {selectedId && (
-        <Table
-          data={history ?? []}
-          columns={columns}
-          containerClassName="w-full max-w-5xl"
-        />
-      )}
+    <div className='parent-container'>
+      <div className='container'>
+        <div className='search-bar-container'>
+          <input
+            type="text"
+            className='search-bar'
+            placeholder="Search by Command ID..."
+            value={searchId}
+            onChange={e => setSearchId(e.target.value)}
+            onKeyDown={e => e.key === 'Enter' && setSelectedId(searchId)}
+          />
+          <button
+            className='search-button'
+            onClick={_ => setSelectedId(searchId)}
+          >
+            Search
+          </button>
+        </div>
+        <Table data={sortedCommands} columns={columns} containerClassName="w-full max-w-5xl"/>
+      </div>
     </div>
   )
 }

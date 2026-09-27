@@ -23,7 +23,7 @@ export interface MainCommand {
 }
 
 export interface CommandHistory {
-  command_id: number;
+  command_id: string;
   status: CommandStatus;
   params: string | null;
   created_at: string;

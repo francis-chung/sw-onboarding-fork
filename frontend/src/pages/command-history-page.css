@@ -1,0 +1,36 @@
+.parent-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.container {
+    display: flex;
+    flex-direction: column;
+    gap: 8;
+    margin-bottom: 1rem;
+    width: 100%;
+    max-width: 48rem;
+}
+
+.search-bar-container {
+    display: flex;
+    flex-direction: row;
+    gap: 8;
+    margin-bottom: 1rem;
+    border-radius: 8;
+}
+
+.search-bar {
+    flex: 1;
+    padding: 0.5rem;
+    border-radius: 0.5rem;
+    border: 1px solid #ccc;
+    margin-right: 6px;
+}
+
+.search-button {
+    background-color: #023ca7;
+    padding: 0.5rem 1rem;
+    border-radius: 0.5rem;
+}
