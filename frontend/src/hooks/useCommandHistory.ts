@@ -8,9 +8,12 @@ export function useCommandHistory(
   const REFETCH_INTERVAL = 5000;
 
   return useQuery({
-    queryKey: ['commandHistory', commandId],
-    queryFn: async () => fetch(`/api/commands/${commandId}/history`).then(res => res.json()).then(d => d.data),
+    queryKey: ["commandHistory", commandId],
+    queryFn: async () =>
+      fetch(`/api/commands/${commandId}/history`)
+        .then((res) => res.json())
+        .then((d) => d.data),
     refetchInterval: REFETCH_INTERVAL,
     enabled: !!commandId,
-  })
+  });
 }

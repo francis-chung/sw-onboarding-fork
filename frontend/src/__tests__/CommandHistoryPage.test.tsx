@@ -36,7 +36,13 @@ describe("CommandHistoryPage", () => {
     // arbitrary valid type_ argument
     vi.mocked(useCommands).mockReturnValue({
       data: [
-        { id: "11111111-1111-1111-1111-111111111111", status: "pending", type_: 1, params: null, created_at: "2026-01-01T00:00:00Z" },
+        {
+          id: "11111111-1111-1111-1111-111111111111",
+          status: "pending",
+          type_: 1,
+          params: null,
+          created_at: "2026-01-01T00:00:00Z",
+        },
       ],
       isLoading: false,
       isError: false,

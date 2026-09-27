@@ -4,7 +4,10 @@ import type { Command } from "../utils/types";
 
 export function useCommands(): UseQueryResult<Command[]> {
   return useQuery({
-    queryKey: ['commands'],
-    queryFn: () => fetch('/api/commands').then(res => res.json()).then(d => d.data),
+    queryKey: ["commands"],
+    queryFn: () =>
+      fetch("/api/commands")
+        .then((res) => res.json())
+        .then((d) => d.data),
   });
 }
