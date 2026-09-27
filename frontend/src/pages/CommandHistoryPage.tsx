@@ -1,10 +1,8 @@
-import { createColumnHelper, flexRender } from "@tanstack/react-table";
+import { createColumnHelper } from "@tanstack/react-table";
 import Table from "../components/Table";
 import type { Command } from "../utils/types";
 import { useCommands } from "../hooks/useCommands";
-import { useCommandHistory } from "../hooks/useCommandHistory";
-import { useEffect, useMemo, useState } from "react";
-import { useQuery } from "@tanstack/react-query";
+import { useMemo, useState } from "react";
 import "./command-history-page.css";
 
 const columnHelper = createColumnHelper<Command>();
