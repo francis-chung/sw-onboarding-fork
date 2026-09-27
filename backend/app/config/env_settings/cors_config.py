@@ -9,10 +9,10 @@ class CORSConfig(BaseSettings):
     Check ``template.env`` for expected .env keys.
     """
 
-    allow_origins: list[str] = []
-    allow_credentials: bool = True
-    allow_method: list[str] = ["*"]
-    allow_headers: list[str] = ["*"]
+    allow_origins: list[str]
+    allow_credentials: bool
+    allow_method: list[str]
+    allow_headers: list[str]
 
     model_config = SettingsConfigDict(env_prefix="CORS_")
 
